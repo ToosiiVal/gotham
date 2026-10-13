@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gotham Case Files | Batcomputer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(rgba(0, 51, 102, .12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 51, 102, .12) 1px, transparent 1px),
+        radial-gradient(ellipse at 50% -15%, #36454f 0, transparent 50%),
+        radial-gradient(ellipse at 90% 45%, rgba(0, 51, 102, .18), transparent 38%),
+        #000000;
+      background-size: 38px 38px, 38px 38px, auto, auto, auto;
+      color: #f2f2f2;
+      font-family: Arial, sans-serif;
+      line-height: 1.55;
+      cursor: default;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      padding: 20px 0;
+      border-bottom: 1px solid #36454f;
+      color: #b8b8b8;
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .topbar strong {
+      color: #ffd700;
+      font-size: .8rem;
+      letter-spacing: .17em;
+    }
+
+    .return-link {
+      display: inline-block;
+      margin-bottom: 18px;
+      color: #9dc8f0;
+      font-size: .75rem;
+      text-decoration: none;
+    }
+
+    .return-link:hover {
+      text-decoration: underline;
+    }
+
+    .system-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .system-status::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #3974a8;
+      box-shadow: 0 0 9px rgba(57, 116, 168, .8);
+      content: "";
+    }
+
+    .intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 30px;
+      padding: 48px 0 30px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #ffd700;
+      font-size: .72rem;
+      font-weight: bold;
+      letter-spacing: .19em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.7rem, 6vw, 4.5rem);
+      font-weight: normal;
+      letter-spacing: -.04em;
+      line-height: 1;
+    }
+
+    .intro-copy {
+      max-width: 560px;
+      margin-bottom: 0;
+      color: #b8b8b8;
+    }
+
+    .bat-symbol {
+      display: grid;
+      width: 110px;
+      height: 72px;
+      flex: 0 0 auto;
+      place-items: center;
+      border: 1px solid #36454f;
+      background:
+        linear-gradient(rgba(0, 51, 102, .3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 51, 102, .3) 1px, transparent 1px);
+      background-size: 12px 12px;
+      color: #9dc8f0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: .12em;
+      opacity: .8;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      padding: 15px 0 22px;
+      border-top: 1px solid #36454f;
+      border-bottom: 1px solid #36454f;
+    }
+
+    nav a {
+      padding: 6px 10px;
+      border: 1px solid #36454f;
+      color: #c2c2c2;
+      cursor: pointer;
+      font-size: .75rem;
+      text-decoration: none;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+
+    nav a:hover {
+      border-color: #ffd700;
+      background: #ffd700;
+      color: #000000;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 20px;
+      margin: 34px 0 16px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.65rem;
+      font-weight: normal;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: #9dc8f0;
+      font-size: .75rem;
+    }
+
+    .profiles {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      padding-bottom: 50px;
+    }
+
+    .profile {
+      display: grid;
+      min-height: 220px;
+      grid-template-columns: minmax(135px, 38%) minmax(0, 1fr);
+      overflow: hidden;
+      border: 1px solid #36454f;
+      background: rgba(20, 24, 28, .96);
+      scroll-margin-top: 18px;
+      position: relative;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+    }
+
+    .profile::before {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #3974a8, transparent);
+      content: "";
+    }
+
+    .profile:hover {
+      transform: translateY(-3px);
+      border-color: #3974a8;
+      box-shadow: 0 0 16px rgba(0, 51, 102, .35);
+    }
+
+    .profile img {
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      object-fit: cover;
+      background: #36454f;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      padding: 18px 17px;
+    }
+
+    .file-number {
+      margin-bottom: 7px;
+      color: #9dc8f0;
+      font-size: .64rem;
+      font-weight: bold;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .profile h3 {
+      margin-bottom: 9px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.55rem;
+      font-weight: normal;
+      line-height: 1.1;
+    }
+
+    .profile-info p {
+      margin-bottom: 14px;
+      color: #b8b8b8;
+      font-size: .84rem;
+      line-height: 1.55;
+    }
+
+    .risk {
+      margin-top: auto;
+      padding-top: 9px;
+      border-top: 1px solid #36454f;
+      color: #ffd700;
+      font-size: .66rem;
+      font-weight: bold;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    footer {
+      border-top: 1px solid #36454f;
+      padding: 19px 0 26px;
+      color: #a0a0a0;
+      font-size: .72rem;
+    }
+
+    footer .shell {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    footer p {
+      margin: 0;
+    }
+
+    @media (max-width: 850px) {
+      .profiles {
+        grid-template-columns: 1fr;
+      }
+
+      .profile {
+        min-height: 205px;
+        grid-template-columns: 210px minmax(0, 1fr);
+      }
+
+      .profile img {
+        min-height: 205px;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .shell {
+        width: min(100% - 28px, 1120px);
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .intro {
+        padding-top: 38px;
+      }
+
+      .bat-symbol {
+        display: none;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .profile {
+        grid-template-columns: 115px minmax(0, 1fr);
+      }
+
+      .profile img {
+        min-height: 100%;
+      }
+
+      .profile-info {
+        padding: 14px 12px;
+      }
+
+      .profile h3 {
+        font-size: 1.3rem;
+      }
+
+      .profile-info p {
+        font-size: .8rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .profile, nav a {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="shell">
+    <div class="topbar">
+      <strong>Wayne · Batcomputer</strong>
+      <span class="system-status">Gotham network active</span>
+    </div>
+
+    <div class="intro">
+      <div>
+        <a class="return-link" href="index.html">← Return to Batcave</a>
+        <p class="eyebrow">Restricted access / Gotham City</p>
+        <h1>Criminal Profiles</h1>
+        <p class="intro-copy">A collection of known adversaries, assembled from the case files of the Batman. Select a name to review the profile.</p>
+      </div>
+      <div class="bat-symbol" aria-hidden="true">B<br>C</div>
+    </div>
+
+    <nav aria-label="Jump to a criminal profile">
+      <a href="#joker">Joker</a>
+      <a href="#harley">Harley Quinn</a>
+      <a href="#riddler">Riddler</a>
+      <a href="#penguin">Penguin</a>
+      <a href="#ivy">Poison Ivy</a>
+      <a href="#two-face">Two-Face</a>
+      <a href="#bane">Bane</a>
+      <a href="#scarecrow">Scarecrow</a>
+      <a href="#catwoman">Catwoman</a>
+    </nav>
+  </header>
+
+  <main class="shell">
+    <div class="section-heading">
+      <h2>Known Gotham associates</h2>
+      <p>Records available: 09</p>
+    </div>
+
+    <div class="profiles">
+      <section class="profile" id="joker">
+        <img src="https://tse4.mm.bing.net/th/id/OIP.lHUc8iox9HPteQoKVJEQ6wHaLJ?r=0&amp;rs=1&amp;pid=ImgDetMain&amp;o=7&amp;rm=3" alt="The Joker">
+        <div class="profile-info">
+          <span class="file-number">File 001 / Unknown</span>
+          <h3>The Joker</h3>
+          <p>Unpredictable criminal responsible for elaborate schemes and public acts of chaos. Motives remain unclear.</p>
+          <span class="risk">Threat assessment: Severe</span>
+        </div>
+      </section>
+
+      <section class="profile" id="harley">
+        <img src="https://i.pinimg.com/originals/7b/23/6b/7b236ba8129074114cf0b50444f5c3f2.jpg" alt="Harley Quinn">
+        <div class="profile-info">
+          <span class="file-number">File 002 / Psychiatrist</span>
+          <h3>Harley Quinn</h3>
+          <p>Former psychiatrist with a talent for acrobatics and an unpredictable approach to crime.</p>
+          <span class="risk">Threat assessment: High</span>
+        </div>
+      </section>
+
+      <section class="profile" id="riddler">
+        <img src="https://th.bing.com/th/id/R.78a001b3f269953bff707e66e561d6e7?rik=6yFKQP7U9gK2FQ&amp;pid=ImgRaw&amp;r=0" alt="The Riddler">
+        <div class="profile-info">
+          <span class="file-number">File 003 / Edward Nygma</span>
+          <h3>The Riddler</h3>
+          <p>Leaves riddles and clues at crime scenes. Attention-seeking behavior may reveal details of his plans.</p>
+          <span class="risk">Threat assessment: High</span>
+        </div>
+      </section>
+
+      <section class="profile" id="penguin">
+        <img src="https://i.pinimg.com/736x/a9/a7/b9/a9a7b91c8c24b94fd6e67e4888abb5f6.jpg" alt="The Penguin">
+        <div class="profile-info">
+          <span class="file-number">File 004 / Oswald Cobblepot</span>
+          <h3>The Penguin</h3>
+          <p>Underworld figure who uses business connections, money, and hired muscle to expand his influence.</p>
+          <span class="risk">Threat assessment: High</span>
+        </div>
+      </section>
+
+      <section class="profile" id="ivy">
+        <img src="https://th.bing.com/th/id/R.07c66be567cbdd3f108bc8088819edd4?rik=B5qrHqpAaw0a%2fg&amp;riu=http%3a%2f%2fimg4.wikia.nocookie.net%2f__cb20120813154146%2fbatman%2fimages%2f6%2f6c%2fDetective_Comics_Vol_2-14_Cover-1_Teaser.jpg&amp;ehk=6F67Rj6MRDmyCiE9JfOg8lKAXTwvNuPKERNzAAT1OoE%3d&amp;risl=&amp;pid=ImgRaw&amp;r=0" alt="Poison Ivy">
+        <div class="profile-info">
+          <span class="file-number">File 005 / Pamela Isley</span>
+          <h3>Poison Ivy</h3>
+          <p>Botanist with a deep knowledge of plants and a record of using them to challenge Gotham's authorities.</p>
+          <span class="risk">Threat assessment: High</span>
+        </div>
+      </section>
+
+      <section class="profile" id="two-face">
+        <img src="https://i.pinimg.com/736x/dc/ac/96/dcac9639262b3d4073a8af7ec819ef98--two-face-costume-face-art.jpg" alt="Two-Face">
+        <div class="profile-info">
+          <span class="file-number">File 006 / Harvey Dent</span>
+          <h3>Two-Face</h3>
+          <p>Former district attorney whose crimes are often decided by the toss of a two-sided coin.</p>
+          <span class="risk">Threat assessment: High</span>
+        </div>
+      </section>
+
+      <section class="profile" id="bane">
+        <img src="https://tse3.mm.bing.net/th/id/OIP.ZmAk3yiKHhLpQU19VUhv-gHaNK?r=0&amp;rs=1&amp;pid=ImgDetMain&amp;o=7&amp;rm=3" alt="Bane">
+        <div class="profile-info">
+          <span class="file-number">File 007 / Tactical threat</span>
+          <h3>Bane</h3>
+          <p>Highly intelligent and exceptionally strong. Treat as a strategic threat, not just a physical one.</p>
+          <span class="risk">Threat assessment: Severe</span>
+        </div>
+      </section>
+
+      <section class="profile" id="scarecrow">
+        <img src="https://tse2.mm.bing.net/th/id/OIP.DKbsKEqGjLmvWVdO6DWUSQHaEL?r=0&amp;rs=1&amp;pid=ImgDetMain&amp;o=7&amp;rm=3" alt="Scarecrow">
+        <div class="profile-info">
+          <span class="file-number">File 008 / Jonathan Crane</span>
+          <h3>Scarecrow</h3>
+          <p>Uses fear toxin to cause intense hallucinations. Avoid exposure and secure the area quickly.</p>
+          <span class="risk">Threat assessment: Severe</span>
+        </div>
+      </section>
+
+      <section class="profile" id="catwoman">
+        <img src="https://tse1.mm.bing.net/th/id/OIP.bSEaCvsb_d2UMN1VpywCPwHaD4?r=0&amp;rs=1&amp;pid=ImgDetMain&amp;o=7&amp;rm=3" alt="Catwoman">
+        <div class="profile-info">
+          <span class="file-number">File 009 / Selina Kyle</span>
+          <h3>Catwoman</h3>
+          <p>Expert burglar and acrobat. Her goals can conflict with Gotham's law enforcement, but her motives vary.</p>
+          <span class="risk">Threat assessment: Variable</span>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <p>Batcomputer / Gotham City case files</p>
+      <p>For authorized use only</p>
+    </div>
+  </footer>
+</body>
+</html>
